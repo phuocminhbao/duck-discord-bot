@@ -5,11 +5,8 @@ import { DuckSlashCommandBuilder } from '../duckSlashBuilder/DuckSlashCommandBui
 export const ping: BotCommand = {
     data: new DuckSlashCommandBuilder().setName('ping').setDescription('Reply on /ping'),
     execute: async (chatInteraction) => {
-        const { interaction: sentInteraction } = await chatInteraction.reply({
-            content: 'Ping con cak?',
-            withResponse: true,
-        });
+        const { interaction } = await chatInteraction.reply('Ping con cak?');
         logger.info({ user: chatInteraction.user.tag }, `Replied`);
-        return sentInteraction;
+        return interaction;
     },
 };

@@ -1,12 +1,14 @@
 import type {
+    CacheType,
     ChatInputCommandInteraction,
-    InteractionCallback,
+    Interaction,
     SlashCommandBuilder,
+    SlashCommandOptionsOnlyBuilder,
 } from 'discord.js';
 
 export type BotCommand = {
-    data: SlashCommandBuilder;
-    execute: (chatInteraction: ChatInputCommandInteraction) => Promise<InteractionCallback>;
+    data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder;
+    execute: (chatInteraction: ChatInputCommandInteraction) => Promise<Interaction<CacheType>>;
 };
 
 export type BotEvent = {
