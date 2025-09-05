@@ -10,14 +10,15 @@ import {
 } from '@discordjs/voice';
 import { logger } from '../../logger/logger.js';
 import type { Payload } from 'youtube-dl-exec';
-
+import { createReadStream } from 'node:fs';
+import { join } from 'node:path';
+const khobau = join(process.cwd(), 'resources', 'khobau.webm');
 const youtubeDl = import('youtube-dl-exec');
 enum OPTION {
     QUERY = 'query',
 }
 
-const RICK_ROLL = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=RDdQw4w9WgXcQ&start_radio=1';
-
+const RICK_ROLL = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
 export const play: BotCommand = {
     data: new DuckSlashCommandBuilder()
         .setName('play')
@@ -29,7 +30,7 @@ export const play: BotCommand = {
                 .setRequired(true),
         ),
     async execute(chatInteraction) {
-        const query = chatInteraction.options.getString(OPTION.QUERY) ?? RICK_ROLL;
+        const query = RICK_ROLL;
 
         // Check if user is in a voice channel
         const member = chatInteraction.member as GuildMember;
@@ -55,15 +56,6 @@ export const play: BotCommand = {
             })) as Payload;
 
             // 2. Pick the best audio-only format (Opus/WebM usually best)
-            const format = info.formats.find(
-                (f: any) => f.acodec !== 'none' && f.vcodec === 'none',
-            );
-            if (!format?.url) {
-                await chatInteraction.followUp('❌ Could not extract audio stream.');
-                return interaction;
-            }
-            const audioUrl = format.url;
-            logger.info(`🎵 Using direct Opus stream: ${audioUrl}`);
 
             // 3. Connect to voice channel
             const connection = joinVoiceChannel({
@@ -73,9 +65,12 @@ export const play: BotCommand = {
             });
 
             // 4. Create resource directly from URL
-            const resource = createAudioResource(info.stea, {
-                inputType: StreamType.Opus, // let Discord.js figure it out
+            const stream = createReadStream(khobau);
+            const resource = createAudioResource(stream, {
+                inputType: StreamType.WebmOpus,
+                inlineVolume: true,
             });
+            resource.volume?.setVolume(0.5);
             const player = createAudioPlayer();
 
             connection.subscribe(player);
