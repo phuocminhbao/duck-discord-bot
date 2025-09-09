@@ -3,7 +3,13 @@ import { loadEvents } from './event/loader/loader.js';
 import { discordToken } from './utils/env.js';
 
 // Minimal intents for slash command interactions
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildVoiceStates,
+    ],
+});
 
 await loadEvents(client);
 

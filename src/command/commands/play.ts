@@ -1,40 +1,39 @@
-import type { GuildMember } from 'discord.js';
-import type { BotCommand } from '../../type.js';
-import { DuckSlashCommandBuilder } from '../duckSlashBuilder/DuckSlashCommandBuilder.js';
+import type { VoiceConnection } from '@discordjs/voice';
 import {
     joinVoiceChannel,
-    createAudioResource,
     createAudioPlayer,
+    createAudioResource,
     AudioPlayerStatus,
     StreamType,
+    entersState,
+    VoiceConnectionStatus,
 } from '@discordjs/voice';
+import type { GuildMember } from 'discord.js';
+import { DuckSlashCommandBuilder } from '../duckSlashBuilder/DuckSlashCommandBuilder.js';
+import type { BotCommand } from '../../type.js';
 import { logger } from '../../logger/logger.js';
-import type { Payload } from 'youtube-dl-exec';
-import { createReadStream } from 'node:fs';
-import { join } from 'node:path';
-const khobau = join(process.cwd(), 'resources', 'khobau.webm');
-const youtubeDl = import('youtube-dl-exec');
+import path from 'node:path';
+
 enum OPTION {
     QUERY = 'query',
 }
 
-const RICK_ROLL = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
 export const play: BotCommand = {
     data: new DuckSlashCommandBuilder()
         .setName('play')
-        .setDescription('Play music from YouTube')
+        .setDescription('Play a local audio file')
         .addStringOption((option) =>
             option
                 .setName(OPTION.QUERY)
-                .setDescription('YouTube URL or search term')
+                .setDescription('Audio file name (without extension)')
                 .setRequired(true),
         ),
-    async execute(chatInteraction) {
-        const query = RICK_ROLL;
 
-        // Check if user is in a voice channel
+    async execute(chatInteraction) {
+        const filename = 'khobau';
         const member = chatInteraction.member as GuildMember;
         const memberVoiceChannel = member.voice.channel;
+
         if (!memberVoiceChannel) {
             const { interaction } = await chatInteraction.reply(
                 '❌ You must be in a voice channel to use this command.',
@@ -42,57 +41,47 @@ export const play: BotCommand = {
             return interaction;
         }
 
-        const { interaction } = await chatInteraction.reply(`🔎 Searching for: ${query}`);
+        const { interaction } = await chatInteraction.reply(
+            `🎵 Playing local file: ${filename}.mp3`,
+        );
+        const connection = joinVoiceChannel({
+            channelId: memberVoiceChannel.id,
+            guildId: memberVoiceChannel.guild.id,
+            adapterCreator: memberVoiceChannel.guild.voiceAdapterCreator,
+        });
+
         try {
-            // 1. Fetch metadata
-            const info = (await (
-                await youtubeDl
-            ).youtubeDl(query, {
-                dumpSingleJson: true,
-                noCheckCertificates: true,
-                noWarnings: true,
-                preferFreeFormats: true,
-                addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
-            })) as Payload;
+            // 1. Resolve absolute path to file
+            const filePath = path.resolve('./resources', `${filename}.mp3`);
+            console.log({ filePath });
+            // 2. Create audio resource
+            const resource = createAudioResource(filePath);
 
-            // 2. Pick the best audio-only format (Opus/WebM usually best)
-
-            // 3. Connect to voice channel
-            const connection = joinVoiceChannel({
-                channelId: memberVoiceChannel.id,
-                guildId: memberVoiceChannel.guild.id,
-                adapterCreator: memberVoiceChannel.guild.voiceAdapterCreator,
-            });
-
-            // 4. Create resource directly from URL
-            const stream = createReadStream(khobau);
-            const resource = createAudioResource(stream, {
-                inputType: StreamType.WebmOpus,
-                inlineVolume: true,
-            });
-            resource.volume?.setVolume(0.5);
             const player = createAudioPlayer();
-
-            connection.subscribe(player);
             player.play(resource);
 
-            // 5. Player state listeners
+            // 3. Connect to voice channel
+            await entersState(connection, VoiceConnectionStatus.Ready, 30_000);
+            connection.subscribe(player);
+
             player.on(AudioPlayerStatus.Playing, () => {
-                logger.info(`▶️ Now playing: ${info.title}`);
+                logger.info(`▶️ Now playing: ${filePath}`);
             });
+
             player.on(AudioPlayerStatus.Idle, () => {
                 logger.info('⏹️ Playback finished');
             });
+
             player.on('error', (error) => {
                 logger.error(error, 'Audio player error');
             });
-
-            await chatInteraction.followUp(`▶️ Now playing: **${info.title}**`);
         } catch (error) {
-            logger.error({ error }, 'Error in /play command');
-            await chatInteraction.followUp('❌ Failed to play track.');
+            logger.error(error, 'Failed to play local file');
+            await chatInteraction.followUp('❌ Failed to play local file.');
+            connection.destroy();
+        } finally {
+            // eslint-disable-next-line no-unsafe-finally
+            return interaction;
         }
-
-        return interaction;
     },
 };
