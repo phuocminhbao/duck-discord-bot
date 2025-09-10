@@ -1,4 +1,4 @@
-import type { Client, Events, Interaction } from 'discord.js';
+import type { Client, ClientEvents, Events, Interaction } from 'discord.js';
 
 export type ClientAction = keyof Client;
 
@@ -11,5 +11,5 @@ export type BotEvent =
     | {
           name: Events.InteractionCreate;
           action: 'on';
-          execute: (Interaction: Interaction) => Promise<void>;
+          execute: (Interaction: ClientEvents[Events.InteractionCreate]) => Promise<void>;
       };

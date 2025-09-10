@@ -1,7 +1,7 @@
 import { REST, Routes } from 'discord.js';
-import { commands } from '../src/bootstrap/commandsLoader.js';
 import { clientId, discordToken, guildId } from '../src/utils/env.js';
 import { logger } from '../src/infrastructure/logger/logger.js';
+import { commands } from '../src/loaders/commandsLoader.js';
 
 const deployCommands = Object.values(commands).map((command) => command.data.toJSON());
 

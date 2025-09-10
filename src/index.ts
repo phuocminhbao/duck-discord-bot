@@ -1,16 +1,10 @@
-import { Client, GatewayIntentBits } from 'discord.js';
+import { Client, Events, GatewayIntentBits } from 'discord.js';
 import { discordToken } from './utils/env.js';
-import { loadEvents } from './bootstrap/eventsLoader.js';
+import { loadEvents } from './loaders/eventsLoader.js';
+import { Bot } from './infrastructure/bot/botAdapter.js';
 
-// Minimal intents for slash command interactions
-const client = new Client({
-    intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.GuildVoiceStates,
-    ],
-});
+const bot = Bot.getInstance();
 
-await loadEvents(client);
+await loadEvents(bot);
 
-client.login(discordToken);
+bot.login(discordToken);

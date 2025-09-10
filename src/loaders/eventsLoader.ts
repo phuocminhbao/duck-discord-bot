@@ -1,7 +1,8 @@
 import type { Client } from 'discord.js';
-import { forEachModule, SUB_SRC_PATH } from '../utils/moduleImport.js';
-import { logger } from '../infrastructure/logger/logger.js';
 import type { BotEvent } from '../types/botEvent.js';
+
+import { logger } from '../infrastructure/logger/logger.js';
+import { forEachModule, SUB_SRC_PATH } from '../utils/moduleImport.js';
 
 /**
  * Dynamically loads all event files in src/eventLoader/events.

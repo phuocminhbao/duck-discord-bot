@@ -1,8 +1,9 @@
-import { Events } from 'discord.js';
-import { logger } from '../infrastructure/logger/logger.js';
-import { commandsMap } from '../bootstrap/commandsLoader.js';
-import { isDev } from '../utils/env.js';
 import type { BotEvent } from '../types/botEvent.js';
+
+import { Events } from 'discord.js';
+import { commandsMap } from '../loaders/commandsLoader.js';
+import { logger } from '../infrastructure/logger/logger.js';
+import { isDev } from '../utils/env.js';
 
 const interactionCreate: BotEvent = {
     name: Events.InteractionCreate,

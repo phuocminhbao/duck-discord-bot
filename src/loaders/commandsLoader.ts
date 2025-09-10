@@ -1,5 +1,6 @@
-import { logger } from '../infrastructure/logger/logger.js';
 import type { BotCommand } from '../types/botCommand.js';
+
+import { logger } from '../infrastructure/logger/logger.js';
 import { forEachModule, SUB_SRC_PATH } from '../utils/moduleImport.js';
 
 /**
