@@ -1,4 +1,4 @@
-import { DuckSlashCommandBuilder } from '../extension/builders/DuckSlashCommandBuilder.js';
+import { DuckSlashCommandBuilder } from '../infrastructure/extension/builders/DuckSlashCommandBuilder.js';
 import { logger } from '../infrastructure/logger/logger.js';
 import type { BotCommand } from '../types/botCommand.js';
 
