@@ -1,7 +1,7 @@
 import type { Client } from 'discord.js';
-import { logger } from '../../logger/logger.js';
-import type { BotEvent } from '../../type.js';
-import { forEachModule, SUB_SRC_PATH } from '../../utils/moduleImport.js';
+import { forEachModule, SUB_SRC_PATH } from '../utils/moduleImport.js';
+import { logger } from '../infrastructure/logger/logger.js';
+import type { BotEvent } from '../types/botEvent.js';
 
 /**
  * Dynamically loads all event files in src/eventLoader/events.
@@ -9,9 +9,9 @@ import { forEachModule, SUB_SRC_PATH } from '../../utils/moduleImport.js';
 export const loadEvents = async (client: Client): Promise<void> => {
     try {
         await forEachModule(SUB_SRC_PATH.EVENTS, (module) => {
-            const event = module as BotEvent<unknown>;
+            const event = module as BotEvent;
             const { name, action, execute } = event;
-            client[action](name, execute);
+            client[action](name, execute as never);
             logger.info(`Loaded event: ${name}`);
         });
     } catch (e) {

@@ -1,6 +1,6 @@
-import type { BotCommand } from '../../type.js';
-import { logger } from '../../logger/logger.js';
-import { DuckSlashCommandBuilder } from '../duckSlashBuilder/DuckSlashCommandBuilder.js';
+import { DuckSlashCommandBuilder } from '../extension/builders/DuckSlashCommandBuilder.js';
+import { logger } from '../infrastructure/logger/logger.js';
+import type { BotCommand } from '../types/botCommand.js';
 
 export const ping: BotCommand = {
     data: new DuckSlashCommandBuilder().setName('ping').setDescription('Reply on /ping'),

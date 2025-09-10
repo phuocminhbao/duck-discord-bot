@@ -1,11 +1,10 @@
-import type { Interaction } from 'discord.js';
 import { Events } from 'discord.js';
-import { commandsMap } from '../../command/loader/loader.js';
-import { logger } from '../../logger/logger.js';
-import { isDev } from '../../utils/env.js';
-import type { BotEvent } from '../../type.js';
+import { logger } from '../infrastructure/logger/logger.js';
+import { commandsMap } from '../bootstrap/commandsLoader.js';
+import { isDev } from '../utils/env.js';
+import type { BotEvent } from '../types/botEvent.js';
 
-const interactionCreate: BotEvent<Interaction> = {
+const interactionCreate: BotEvent = {
     name: Events.InteractionCreate,
     action: 'on',
     async execute(interaction) {

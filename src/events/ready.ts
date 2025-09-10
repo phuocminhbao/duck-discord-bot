@@ -1,9 +1,8 @@
-import type { Client } from 'discord.js';
 import { Events } from 'discord.js';
-import { logger } from '../../logger/logger.js';
-import type { BotEvent } from '../../type.js';
+import { logger } from '../infrastructure/logger/logger.js';
+import type { BotEvent } from '../types/botEvent.js';
 
-const ready: BotEvent<Client> = {
+const ready: BotEvent = {
     name: Events.ClientReady,
     action: 'once',
     execute: (client) => {

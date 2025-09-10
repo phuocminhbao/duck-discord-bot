@@ -1,5 +1,5 @@
 import pino from 'pino';
-import { isDev } from '../utils/env.js';
+import { isDev } from '../../utils/env.js';
 
 function getCallerInfo() {
     const stack = new Error().stack?.split('\n');

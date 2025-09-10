@@ -7,10 +7,10 @@ import {
     VoiceConnectionStatus,
 } from '@discordjs/voice';
 import type { GuildMember } from 'discord.js';
-import { DuckSlashCommandBuilder } from '../duckSlashBuilder/DuckSlashCommandBuilder.js';
-import type { BotCommand } from '../../type.js';
-import { logger } from '../../logger/logger.js';
+import { DuckSlashCommandBuilder } from '../extension/builders/DuckSlashCommandBuilder.js';
 import path from 'node:path';
+import { logger } from '../infrastructure/logger/logger.js';
+import type { BotCommand } from '../types/botCommand.js';
 
 enum OPTION {
     QUERY = 'query',

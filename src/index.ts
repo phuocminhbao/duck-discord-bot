@@ -1,6 +1,6 @@
 import { Client, GatewayIntentBits } from 'discord.js';
-import { loadEvents } from './event/loader/loader.js';
 import { discordToken } from './utils/env.js';
+import { loadEvents } from './bootstrap/eventsLoader.js';
 
 // Minimal intents for slash command interactions
 const client = new Client({

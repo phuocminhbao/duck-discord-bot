@@ -1,6 +1,6 @@
-import type { BotCommand } from '../../type.js';
-import { logger } from '../../logger/logger.js';
-import { forEachModule, SUB_SRC_PATH } from '../../utils/moduleImport.js';
+import { logger } from '../infrastructure/logger/logger.js';
+import type { BotCommand } from '../types/botCommand.js';
+import { forEachModule, SUB_SRC_PATH } from '../utils/moduleImport.js';
 
 /**
  * Dynamically loads all command files in src/commands.
