@@ -1,10 +1,8 @@
-import type { VoiceConnection } from '@discordjs/voice';
 import {
     joinVoiceChannel,
     createAudioPlayer,
     createAudioResource,
     AudioPlayerStatus,
-    StreamType,
     entersState,
     VoiceConnectionStatus,
 } from '@discordjs/voice';
@@ -30,7 +28,7 @@ export const play: BotCommand = {
         ),
 
     async execute(chatInteraction) {
-        const filename = 'khobau';
+        const filename = chatInteraction.options.get(OPTION.QUERY)?.value;
         const member = chatInteraction.member as GuildMember;
         const memberVoiceChannel = member.voice.channel;
 
@@ -52,8 +50,7 @@ export const play: BotCommand = {
 
         try {
             // 1. Resolve absolute path to file
-            const filePath = path.resolve('./resources', `${filename}.mp3`);
-            console.log({ filePath });
+            const filePath = path.resolve('./resources', `${filename}.webm`);
             // 2. Create audio resource
             const resource = createAudioResource(filePath);
 

@@ -3,11 +3,12 @@ import { Events } from 'discord.js';
 import { commandsMap } from '../../command/loader/loader.js';
 import { logger } from '../../logger/logger.js';
 import { isDev } from '../../utils/env.js';
+import type { BotEvent } from '../../type.js';
 
-export default {
+const interactionCreate: BotEvent<Interaction> = {
     name: Events.InteractionCreate,
-    once: false,
-    async execute(interaction: Interaction) {
+    action: 'on',
+    async execute(interaction) {
         if (!interaction.isChatInputCommand()) {
             logger.error('This type of command is not supported');
             return;
@@ -43,3 +44,5 @@ export default {
         }
     },
 };
+
+export default interactionCreate;

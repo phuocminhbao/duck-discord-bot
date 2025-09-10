@@ -1,6 +1,8 @@
 import type {
     CacheType,
     ChatInputCommandInteraction,
+    Client,
+    Events,
     Interaction,
     SlashCommandBuilder,
     SlashCommandOptionsOnlyBuilder,
@@ -11,8 +13,10 @@ export type BotCommand = {
     execute: (chatInteraction: ChatInputCommandInteraction) => Promise<Interaction<CacheType>>;
 };
 
-export type BotEvent = {
-    name: string;
-    once?: boolean;
-    execute: (...args: unknown[]) => void | Promise<void>;
+type ClientAction = Extract<keyof Client, 'on' | 'once'>;
+
+export type BotEvent<T> = {
+    name: Events.ClientReady | Events.InteractionCreate;
+    action: ClientAction;
+    execute: (args: T) => void | Promise<void>;
 };
