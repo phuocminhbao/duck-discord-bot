@@ -1,12 +1,12 @@
 import { Client, GatewayIntentBits } from 'discord.js';
 
-export class Bot {
+export class BotClient {
     private static INSTANCE: Client;
 
     private constructor() {}
 
     static getInstance() {
-        if (!Bot.INSTANCE) {
+        if (!BotClient.INSTANCE) {
             const client = new Client({
                 intents: [
                     GatewayIntentBits.Guilds,
@@ -14,12 +14,12 @@ export class Bot {
                     GatewayIntentBits.GuildVoiceStates,
                 ],
             });
-            Bot.setInstance(client);
+            BotClient.setInstance(client);
         }
-        return Bot.INSTANCE;
+        return BotClient.INSTANCE;
     }
 
     private static setInstance(instance: Client) {
-        Bot.INSTANCE = instance;
+        BotClient.INSTANCE = instance;
     }
 }

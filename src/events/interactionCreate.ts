@@ -2,11 +2,11 @@ import { Events } from 'discord.js';
 import { commandsMap } from '../loaders/commandsLoader.js';
 import { logger } from '../infrastructure/logger/logger.js';
 import { isDev } from '../utils/env.js';
-import { Bot } from '../infrastructure/bot/botAdapter.js';
+import { BotClient } from '../infrastructure/botClient/botClient.js';
 
 const loadInteractionCreateEvent = () => {
-    const bot = Bot.getInstance();
-    bot.on(Events.InteractionCreate, async (interaction) => {
+    const botClient = BotClient.getInstance();
+    botClient.on(Events.InteractionCreate, async (interaction) => {
         if (!interaction.isChatInputCommand()) {
             logger.error('This type of command is not supported');
             return;

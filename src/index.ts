@@ -1,9 +1,9 @@
 import { discordToken } from './utils/env.js';
 import { loadEvents } from './loaders/eventsLoader.js';
-import { Bot } from './infrastructure/bot/botAdapter.js';
+import { BotClient } from './infrastructure/botClient/botClient.js';
 
-const bot = Bot.getInstance();
+const botClient = BotClient.getInstance();
 
 await loadEvents();
 
-bot.login(discordToken);
+botClient.login(discordToken);
