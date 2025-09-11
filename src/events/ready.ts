@@ -1,14 +1,11 @@
-import type { BotEvent } from '../types/botEvent.js';
-
 import { Events } from 'discord.js';
 import { logger } from '../infrastructure/logger/logger.js';
+import { Bot } from '../infrastructure/bot/botAdapter.js';
 
-const ready: BotEvent = {
-    name: Events.ClientReady,
-    action: 'once',
-    execute: (client) => {
+const loadReadyEvent = () => {
+    const bot = Bot.getInstance();
+    bot.once(Events.ClientReady, (client) => {
         logger.info(`Ready: ${client.user?.tag}`);
-    },
+    });
 };
-
-export default ready;
+export default loadReadyEvent;

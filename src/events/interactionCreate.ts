@@ -1,19 +1,16 @@
-import type { BotEvent } from '../types/botEvent.js';
-
 import { Events } from 'discord.js';
 import { commandsMap } from '../loaders/commandsLoader.js';
 import { logger } from '../infrastructure/logger/logger.js';
 import { isDev } from '../utils/env.js';
+import { Bot } from '../infrastructure/bot/botAdapter.js';
 
-const interactionCreate: BotEvent = {
-    name: Events.InteractionCreate,
-    action: 'on',
-    async execute(interaction) {
+const loadInteractionCreateEvent = () => {
+    const bot = Bot.getInstance();
+    bot.on(Events.InteractionCreate, async (interaction) => {
         if (!interaction.isChatInputCommand()) {
             logger.error('This type of command is not supported');
             return;
         }
-
         const command = commandsMap[interaction.commandName];
         if (!command) {
             logger.error(`Unknown command: ${interaction.commandName}`);
@@ -42,7 +39,7 @@ const interactionCreate: BotEvent = {
                     .catch(() => {});
             }
         }
-    },
+    });
 };
 
-export default interactionCreate;
+export default loadInteractionCreateEvent;

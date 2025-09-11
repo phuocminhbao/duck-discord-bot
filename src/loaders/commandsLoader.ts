@@ -9,7 +9,7 @@ import { forEachModule, SUB_SRC_PATH } from '../utils/moduleImport.js';
 export const loadCommands = async (): Promise<Record<string, BotCommand>> => {
     const commandsMap: Record<string, BotCommand> = {};
     try {
-        await forEachModule(SUB_SRC_PATH.COMMANDS, (module) => {
+        await forEachModule(SUB_SRC_PATH.COMMANDS, false, (module) => {
             const command = module as BotCommand;
             const commandName = command.data.name;
             if (commandsMap[commandName]) {
