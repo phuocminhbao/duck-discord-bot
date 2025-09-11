@@ -1,5 +1,5 @@
 import type { AudioResource } from '@discordjs/voice';
-import type { IAudioBot } from '../../domain/bot/interfaces/iAudioBot.js';
+import type { IAudioBot } from '../../domain/bot/iAudioBot.js';
 import { isValidUrl } from '../../utils/url.js';
 import { resolve } from 'node:path';
 export class LocalBot implements IAudioBot {
