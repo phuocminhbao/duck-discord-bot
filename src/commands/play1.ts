@@ -1,15 +1,4 @@
-import {
-    joinVoiceChannel,
-    createAudioPlayer,
-    createAudioResource,
-    AudioPlayerStatus,
-    entersState,
-    VoiceConnectionStatus,
-} from '@discordjs/voice';
-import type { GuildMember } from 'discord.js';
 import { DuckSlashCommandBuilder } from '../infrastructure/extension/builders/DuckSlashCommandBuilder.js';
-import path from 'node:path';
-import { logger } from '../infrastructure/logger/logger.js';
 import type { BotCommand } from '../types/botCommand.js';
 import { PlayUseCase } from '../application/audio/playUseCase.js';
 import { AudioManager } from '../infrastructure/audio/audioManager.js';
@@ -31,8 +20,12 @@ export const play: BotCommand = {
         ),
 
     async execute(chatInteraction) {
+        const { interaction } = await chatInteraction.reply(
+            `Proccessing ${chatInteraction.commandName}`,
+        );
         const audioManager = new AudioManager(new LocalBot(''));
         const playUseCase = new PlayUseCase(audioManager);
         playUseCase.execute('');
+        return interaction;
     },
 };
