@@ -26,7 +26,7 @@ export const forEachModule = async (
         const module = await import(fileUrl);
         if (!isDefaultOnly) {
             callback(module.default ?? Object.values(module)[0]);
-            return;
+            continue;
         }
         if (!module.default) {
             logger.warn(`${fileUrl} doesn't have default export`);
