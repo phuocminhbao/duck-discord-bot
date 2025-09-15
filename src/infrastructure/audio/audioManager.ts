@@ -62,6 +62,7 @@ export class AudioManager implements IAudioManager {
         }
         this.audioPlayer.play(resource);
         this.setPlaying();
+        this.voiceConnection?.subscribe(this.audioPlayer);
     }
 
     playNow(): void {

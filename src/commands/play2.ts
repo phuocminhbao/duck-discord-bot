@@ -18,7 +18,7 @@ enum OPTION {
 
 export const play: BotCommand = {
     data: new DuckSlashCommandBuilder()
-        .setName('play')
+        .setName('play1')
         .setDescription('Play a local audio file')
         .addStringOption((option) =>
             option

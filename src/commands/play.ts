@@ -4,6 +4,9 @@ import { PlayAudio } from '../application/useCases/audio/playAudio.js';
 import { AudioManager } from '../infrastructure/audio/audioManager.js';
 import type { GuildMember } from 'discord.js';
 import { LocalAudioResourceResolver } from '../infrastructure/audio/LocalAudioResourceResolver.js';
+import { logger } from '../infrastructure/logger/logger.js';
+import { AudioManagerRegistry } from '../infrastructure/audio/audioManagerRegistry.js';
+import { guildId } from '../utils/env.js';
 
 enum OPTION {
     QUERY = 'query',
@@ -11,7 +14,7 @@ enum OPTION {
 
 export const play: BotCommand = {
     data: new DuckSlashCommandBuilder()
-        .setName('play1')
+        .setName('play')
         .setDescription('Play a local audio file')
         .addStringOption((option) =>
             option
@@ -34,10 +37,19 @@ export const play: BotCommand = {
             );
             return interaction;
         }
-        const audioManager = new AudioManager(memberVoiceChannel.guild);
-        audioManager.setResourceResolver(new LocalAudioResourceResolver(query));
-        const playUseCase = new PlayAudio(audioManager);
-        playUseCase.executeInChannel(memberVoiceChannel.id);
-        return interaction;
+        try {
+            const audioManager = AudioManagerRegistry.INSTANCE.getOrRegisterAudioManager(
+                guildId,
+                () => new AudioManager(memberVoiceChannel.guild),
+            );
+            audioManager.setResourceResolver(new LocalAudioResourceResolver(query));
+            const playUseCase = new PlayAudio(audioManager);
+            await playUseCase.executeInChannel(memberVoiceChannel.id);
+            return interaction;
+        } catch (error) {
+            logger.error(error, 'Failed to play local file');
+            await chatInteraction.followUp(`❌ Failed to play the audio: ${query}`);
+            return interaction;
+        }
     },
 };
