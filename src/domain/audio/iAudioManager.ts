@@ -9,7 +9,7 @@ export interface IAudioManager {
     resume(): void;
     stop(): void;
 
-    addToQueue(): void;
+    addToQueue(): Promise<void>;
     skip(): void;
     clearQueue(): void;
 

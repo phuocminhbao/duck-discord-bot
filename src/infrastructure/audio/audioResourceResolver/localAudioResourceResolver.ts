@@ -1,6 +1,6 @@
 import { createAudioResource } from '@discordjs/voice';
 import type { IAudioResourceResolver } from './iAudioResourceResolver.js';
-import { isValidUrl } from '../../utils/url.js';
+import { isValidUrl } from '../../../utils/url.js';
 import path from 'node:path';
 
 export class LocalAudioResourceResolver implements IAudioResourceResolver {

@@ -11,7 +11,7 @@ import {
 import type { AudioManagerStatus, IAudioManager } from '../../domain/audio/iAudioManager.js';
 import type { Guild } from 'discord.js';
 import { logger } from '../logger/logger.js';
-import type { IAudioResourceResolver } from './iAudioResourceResolver.js';
+import type { IAudioResourceResolver } from './audioResourceResolver/iAudioResourceResolver.js';
 
 export class AudioManager implements IAudioManager {
     private guild: Guild;
@@ -81,11 +81,11 @@ export class AudioManager implements IAudioManager {
         throw new Error('Method not implemented.');
     }
 
-    addToQueue(): void {
+    async addToQueue() {
         if (!this.resourceResolver) {
             throw new Error('Resource Resolver is null');
         }
-        const resource = this.resourceResolver.createResource();
+        const resource = await this.resourceResolver.createResource();
         this.queue.push(resource);
     }
 

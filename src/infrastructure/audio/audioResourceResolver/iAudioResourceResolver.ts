@@ -9,5 +9,5 @@ export interface IAudioResourceResolver {
     /**
      * Create an AudioResource ready for playback
      */
-    createResource(): AudioResource;
+    createResource(): AudioResource | Promise<AudioResource>;
 }

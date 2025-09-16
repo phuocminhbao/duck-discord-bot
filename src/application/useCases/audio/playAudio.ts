@@ -9,7 +9,7 @@ export class PlayAudio {
 
     async executeInChannel(channelId: string) {
         await this.audioManager.join(channelId);
-        this.audioManager.addToQueue();
+        await this.audioManager.addToQueue();
         this.audioManager.play();
     }
 }

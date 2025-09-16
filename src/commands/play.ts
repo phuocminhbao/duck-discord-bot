@@ -3,10 +3,11 @@ import type { BotCommand } from '../types/botCommand.js';
 import { PlayAudio } from '../application/useCases/audio/playAudio.js';
 import { AudioManager } from '../infrastructure/audio/audioManager.js';
 import type { GuildMember } from 'discord.js';
-import { LocalAudioResourceResolver } from '../infrastructure/audio/LocalAudioResourceResolver.js';
 import { logger } from '../infrastructure/logger/logger.js';
 import { AudioManagerRegistry } from '../infrastructure/audio/audioManagerRegistry.js';
 import { guildId } from '../utils/env.js';
+import { LocalAudioResourceResolver } from '../infrastructure/audio/audioResourceResolver/localAudioResourceResolver.js';
+import { AudioResourceResolverFactory } from '../infrastructure/audio/audioResourceResolver/audioResourceResolverFactory.js';
 
 enum OPTION {
     QUERY = 'query',
@@ -42,7 +43,7 @@ export const play: BotCommand = {
                 guildId,
                 () => new AudioManager(memberVoiceChannel.guild),
             );
-            audioManager.setResourceResolver(new LocalAudioResourceResolver(query));
+            audioManager.setResourceResolver(AudioResourceResolverFactory.getResolver(query));
             const playUseCase = new PlayAudio(audioManager);
             await playUseCase.executeInChannel(memberVoiceChannel.id);
             return interaction;
