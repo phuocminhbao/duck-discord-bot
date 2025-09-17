@@ -1,4 +1,3 @@
-export type AudioManagerStatus = 'idle' | 'playing' | 'paused';
 export interface IAudioManager {
     join(channel: string): Promise<void>;
     leave(): Promise<void>;
@@ -15,5 +14,5 @@ export interface IAudioManager {
 
     // getQueue(): AudioTrack[];
     // getCurrentTrack(): AudioTrack | null;
-    getStatus(): AudioManagerStatus;
+    get status(): string;
 }

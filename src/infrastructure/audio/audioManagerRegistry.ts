@@ -32,11 +32,11 @@ export class AudioManagerRegistry {
         guildId: string,
         createAudioManager: () => AudioManager,
     ): AudioManager {
-        // const existingAudioManager = this.getAudioManager(guildId);
-        // if (existingAudioManager) {
-        //     logger.info(`Found audio manager for ${guildId}`);
-        //     return existingAudioManager;
-        // }
+        const existingAudioManager = this.getAudioManager(guildId);
+        if (existingAudioManager) {
+            logger.info(`Found audio manager for ${guildId}`);
+            return existingAudioManager;
+        }
         const audioManager = createAudioManager();
         this.registerAudioManager(guildId, audioManager);
         logger.info(`Create new audio manager for ${guildId}`);

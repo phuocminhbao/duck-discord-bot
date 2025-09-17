@@ -14,7 +14,7 @@ export class LocalAudioResourceResolver implements IAudioResourceResolver {
         return !isValidUrl(this.query);
     }
 
-    createResource() {
+    async createResource() {
         const filePath = path.resolve('./resources', `${this.query}.mp3`);
         // 2. Create audio resource
         return createAudioResource(filePath);

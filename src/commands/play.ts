@@ -6,7 +6,6 @@ import type { GuildMember } from 'discord.js';
 import { logger } from '../infrastructure/logger/logger.js';
 import { AudioManagerRegistry } from '../infrastructure/audio/audioManagerRegistry.js';
 import { guildId } from '../utils/env.js';
-import { LocalAudioResourceResolver } from '../infrastructure/audio/audioResourceResolver/localAudioResourceResolver.js';
 import { AudioResourceResolverFactory } from '../infrastructure/audio/audioResourceResolver/audioResourceResolverFactory.js';
 
 enum OPTION {
