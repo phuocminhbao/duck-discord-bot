@@ -41,7 +41,7 @@ export const play: BotCommand = {
             return interaction;
         } catch (error) {
             logger.error(
-                { error, user: member.nickname, guildId: member.guild.id },
+                { error, user: member.displayName, guildId: member.guild.id },
                 'Failed to play',
             );
             await chatInteraction.followUp(`❌ Oh no, failed to play: ${query}`);

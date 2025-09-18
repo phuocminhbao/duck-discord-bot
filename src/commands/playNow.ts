@@ -6,6 +6,7 @@ import { AudioManager } from '../infrastructure/audio/audioManager.js';
 import { AudioManagerRegistry } from '../infrastructure/audio/audioManagerRegistry.js';
 import { AudioResourceResolverFactory } from '../infrastructure/audio/audioResourceResolver/audioResourceResolverFactory.js';
 import { PlayAudioNow } from '../application/useCases/audio/playAudioNow.js';
+import { SkipAudio } from '../application/useCases/audio/skipAudio.js';
 
 export const playNow: BotCommand = {
     data: new DuckSlashCommandBuilder()
@@ -39,10 +40,13 @@ export const playNow: BotCommand = {
             return interaction;
         } catch (error) {
             logger.error(
-                { error, user: member.nickname, guildId: member.guild.id },
+                { error, user: member.displayName, guildId: member.guild.id },
                 'Failed to play',
             );
             await chatInteraction.followUp(`❌ Oh no, failed to play: ${query}`);
+            await chatInteraction.followUp(`I will try for the next audio`);
+            const skipAudio = new SkipAudio(audioManager);
+            skipAudio.execute();
             return interaction;
         }
     },

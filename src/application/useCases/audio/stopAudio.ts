@@ -1,12 +1,12 @@
 import type { IAudioManager } from '../../../domain/audio/iAudioManager.js';
 import { AudioUseCase } from './audioUseCase.js';
 
-export class SkipAudio extends AudioUseCase {
+export class StopAudio extends AudioUseCase {
     constructor(audioManager: IAudioManager) {
         super(audioManager);
     }
 
     execute() {
-        this.audioManager.skip();
+        this.audioManager.stop();
     }
 }

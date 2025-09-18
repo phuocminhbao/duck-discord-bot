@@ -3,28 +3,28 @@ import { AudioManagerRegistry } from '../infrastructure/audio/audioManagerRegist
 import { DuckSlashCommandBuilder } from '../infrastructure/extension/builders/DuckSlashCommandBuilder.js';
 import { logger } from '../infrastructure/logger/logger.js';
 import type { BotCommand } from '../types/botCommand.js';
-import { SkipAudio } from '../application/useCases/audio/skipAudio.js';
+import { StopAudio } from '../application/useCases/audio/stopAudio.js';
 
-export const skip: BotCommand = {
-    data: new DuckSlashCommandBuilder().setName('skip').setDescription('skip current audio'),
+export const stop: BotCommand = {
+    data: new DuckSlashCommandBuilder().setName('stop').setDescription('stop current audio'),
     execute: async (chatInteraction) => {
-        const { interaction } = await chatInteraction.reply('Skipping...');
-        logger.info({ user: chatInteraction.user.tag }, `Skipping current audio`);
+        const { interaction } = await chatInteraction.reply('stopping...');
+        logger.info({ user: chatInteraction.user.tag }, `stopping current audio`);
         const member = chatInteraction.member as GuildMember;
         if (!member.voice.channel) {
-            await chatInteraction.followUp('❌ Can not skip while you not in a room');
+            await chatInteraction.followUp('❌ Can not stop while you not in a room');
             return interaction;
         }
         const audioManager = AudioManagerRegistry.INSTANCE.getAudioManager(member.guild.id);
 
         try {
-            const skipAudio = new SkipAudio(audioManager);
-            skipAudio.execute();
+            const stopAudio = new StopAudio(audioManager);
+            stopAudio.execute();
             return interaction;
         } catch (error) {
             logger.error(
                 { error, user: member.displayName, guildId: member.guild.id },
-                'Failed to skip',
+                'Failed to stop',
             );
             return interaction;
         }

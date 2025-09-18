@@ -27,6 +27,7 @@ export class AudioManager implements IAudioManager {
     private resourceResolver?: IAudioResourceResolver;
     private queue: AudioQueue;
     private currentAudio?: Audio;
+    private EMPTY_QUEUE_LENGTH = 0;
 
     constructor(guild: Guild) {
         this.guild = guild;
@@ -59,11 +60,7 @@ export class AudioManager implements IAudioManager {
     }
 
     play(isSkip: boolean = false) {
-        const isBusy = [
-            AudioPlayerStatus.Playing,
-            AudioPlayerStatus.Paused,
-            AudioPlayerStatus.AutoPaused,
-        ].includes(this.status);
+        const isBusy = [AudioPlayerStatus.Playing, AudioPlayerStatus.Paused].includes(this.status);
         if (isBusy && !isSkip) {
             return;
         }
@@ -95,6 +92,7 @@ export class AudioManager implements IAudioManager {
     }
 
     stop(): void {
+        this.clearQueue();
         this.audioPlayer.stop();
     }
 
@@ -112,6 +110,10 @@ export class AudioManager implements IAudioManager {
     }
 
     skip(): void {
+        if (this.queue.length === this.EMPTY_QUEUE_LENGTH) {
+            this.stop();
+            return;
+        }
         this.play(true);
     }
 
@@ -120,7 +122,7 @@ export class AudioManager implements IAudioManager {
     }
 
     get queueNames(): string[] {
-        return this.queue.map((audio) => audio.name);
+        return this.queue.map((audio) => audio?.name);
     }
     get currentAudioName(): string | undefined {
         return this.currentAudio?.name;
@@ -142,6 +144,7 @@ export class AudioManager implements IAudioManager {
 
         this.audioPlayer.on('error', (error) => {
             logger.error(error, 'Audio player error');
+            this.play();
         });
     }
 

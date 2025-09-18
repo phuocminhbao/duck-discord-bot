@@ -7,10 +7,9 @@ export interface IAudioManager {
     pause(): void;
     resume(): void;
     stop(): void;
-
+    clearQueue(): void;
     addToQueue(): Promise<void>;
     skip(): void;
-    clearQueue(): void;
 
     get queueNames(): string[];
     get currentAudioName(): string | undefined;

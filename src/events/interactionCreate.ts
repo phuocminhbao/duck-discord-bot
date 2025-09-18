@@ -28,7 +28,7 @@ const loadInteractionCreateEvent = () => {
             );
             if (isDev) {
                 await interaction.followUp(
-                    `Latency: ${sentInteraction.createdTimestamp - sentInteraction.createdTimestamp}ms`,
+                    `Latency: ${interaction.createdTimestamp - sentInteraction.createdTimestamp}ms`,
                 );
             }
         } catch (err) {
