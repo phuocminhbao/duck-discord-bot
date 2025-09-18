@@ -13,12 +13,20 @@ import type { Guild } from 'discord.js';
 import { logger } from '../logger/logger.js';
 import type { IAudioResourceResolver } from './audioResourceResolver/iAudioResourceResolver.js';
 
+type Audio = {
+    name: string;
+    resource: AudioResource;
+};
+
+type AudioQueue = Audio[];
+
 export class AudioManager implements IAudioManager {
     private guild: Guild;
     private voiceConnection?: VoiceConnection;
     private audioPlayer: AudioPlayer;
-    private queue: AudioResource[];
     private resourceResolver?: IAudioResourceResolver;
+    private queue: AudioQueue;
+    private currentAudio?: Audio;
 
     constructor(guild: Guild) {
         this.guild = guild;
@@ -50,32 +58,44 @@ export class AudioManager implements IAudioManager {
         this.voiceConnection = undefined;
     }
 
-    play() {
-        if (this.status === AudioPlayerStatus.Playing) {
+    play(isSkip: boolean = false) {
+        const isBusy = [
+            AudioPlayerStatus.Playing,
+            AudioPlayerStatus.Paused,
+            AudioPlayerStatus.AutoPaused,
+        ].includes(this.status);
+        if (isBusy && !isSkip) {
             return;
         }
-        const resource = this.queue.shift();
-        if (!resource) {
+        const audio = this.queue.shift();
+        this.playAudio(audio);
+    }
+
+    async playNow() {
+        await this.addToQueue();
+        const audio = this.queue.pop();
+        this.playAudio(audio);
+    }
+
+    private playAudio(audio?: Audio) {
+        if (!audio) {
             logger.warn('No audio left in the queue');
             return;
         }
-        this.audioPlayer.play(resource);
-    }
-
-    playNow(): void {
-        throw new Error('Method not implemented.');
+        this.audioPlayer.play(audio.resource);
+        this.currentAudio = audio;
     }
 
     pause(): void {
-        throw new Error('Method not implemented.');
+        this.audioPlayer.pause(true);
     }
 
     resume(): void {
-        throw new Error('Method not implemented.');
+        this.audioPlayer.unpause();
     }
 
     stop(): void {
-        throw new Error('Method not implemented.');
+        this.audioPlayer.stop();
     }
 
     async addToQueue() {
@@ -83,7 +103,8 @@ export class AudioManager implements IAudioManager {
             throw new Error('Resource Resolver is null');
         }
         const resource = await this.resourceResolver.createResource();
-        this.queue.push(resource);
+        const audioName = this.resourceResolver.audioName;
+        this.queue.push({ name: audioName, resource });
     }
 
     setResourceResolver(resourceResolver: IAudioResourceResolver) {
@@ -91,20 +112,27 @@ export class AudioManager implements IAudioManager {
     }
 
     skip(): void {
-        throw new Error('Method not implemented.');
+        this.play(true);
     }
 
     clearQueue(): void {
-        throw new Error('Method not implemented.');
+        this.queue = [];
     }
 
-    get status() {
+    get queueNames(): string[] {
+        return this.queue.map((audio) => audio.name);
+    }
+    get currentAudioName(): string | undefined {
+        return this.currentAudio?.name;
+    }
+
+    private get status() {
         return this.audioPlayer.state.status;
     }
 
     private onAudioPlayerStatusChange() {
         this.audioPlayer.on(AudioPlayerStatus.Playing, () => {
-            logger.info(`▶️ Now playing`);
+            logger.info(`▶️ Now playing: ${this.currentAudioName}`);
         });
 
         this.audioPlayer.on(AudioPlayerStatus.Idle, () => {

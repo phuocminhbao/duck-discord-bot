@@ -5,9 +5,14 @@ import ytdl from '@distube/ytdl-core';
 export class YoutubeAudioResourceResolver implements IAudioResourceResolver {
     private query: string;
     private preferredAudioItags = [251, 250, 249];
+    private resolvedAudioName?: string;
 
     constructor(query: string) {
         this.query = query;
+    }
+
+    get audioName(): string {
+        return this.resolvedAudioName ?? this.query;
     }
 
     canHandle(): boolean {
@@ -16,7 +21,7 @@ export class YoutubeAudioResourceResolver implements IAudioResourceResolver {
 
     async createResource() {
         const info = await ytdl.getInfo(this.query);
-
+        this.resolvedAudioName = info.videoDetails.title;
         const streamUrl = this.selectBestAudioStream(info.formats)?.url;
         const streamResource = await fetch(streamUrl ?? '');
         return createAudioResource(streamResource.body as any);

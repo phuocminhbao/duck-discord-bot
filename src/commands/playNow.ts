@@ -1,43 +1,41 @@
-import { DuckSlashCommandBuilder } from '../infrastructure/extension/builders/DuckSlashCommandBuilder.js';
-import { OPTION, type BotCommand } from '../types/botCommand.js';
-import { PlayAudio } from '../application/useCases/audio/playAudio.js';
-import { AudioManager } from '../infrastructure/audio/audioManager.js';
 import type { GuildMember } from 'discord.js';
+import { DuckSlashCommandBuilder } from '../infrastructure/extension/builders/DuckSlashCommandBuilder.js';
 import { logger } from '../infrastructure/logger/logger.js';
+import { OPTION, type BotCommand } from '../types/botCommand.js';
+import { AudioManager } from '../infrastructure/audio/audioManager.js';
 import { AudioManagerRegistry } from '../infrastructure/audio/audioManagerRegistry.js';
 import { AudioResourceResolverFactory } from '../infrastructure/audio/audioResourceResolver/audioResourceResolverFactory.js';
+import { PlayAudioNow } from '../application/useCases/audio/playAudioNow.js';
 
-export const play: BotCommand = {
+export const playNow: BotCommand = {
     data: new DuckSlashCommandBuilder()
-        .setName('play')
-        .setDescription('Play audio from youtube or local')
+        .setName('play-now')
+        .setDescription('play an audio immediately')
         .addStringOption((option) =>
             option
                 .setName(OPTION.QUERY)
-                .setDescription('Youtube link or local audio file name')
+                .setDescription('Youtube link or local audio file name immediately')
                 .setRequired(true),
         ),
-
-    async execute(chatInteraction) {
+    execute: async (chatInteraction) => {
         const query = chatInteraction.options.get(OPTION.QUERY)?.value as string;
         const { interaction } = await chatInteraction.reply(`Looking for ${query}`);
         const member = chatInteraction.member as GuildMember;
         const memberVoiceChannel = member.voice.channel;
-
         if (!memberVoiceChannel) {
             await chatInteraction.followUp(
                 '❌ How the fuck am I supposed to know which room to join if your dumb ass is not even in one?',
             );
             return interaction;
         }
+        const audioManager = AudioManagerRegistry.INSTANCE.getOrRegisterAudioManager(
+            member.guild.id,
+            () => new AudioManager(member.guild),
+        );
         try {
-            const audioManager = AudioManagerRegistry.INSTANCE.getOrRegisterAudioManager(
-                member.guild.id,
-                () => new AudioManager(member.guild),
-            );
             audioManager.setResourceResolver(AudioResourceResolverFactory.getResolver(query));
-            const playAudio = new PlayAudio(audioManager);
-            await playAudio.executeInChannel(memberVoiceChannel.id);
+            const playAudioNow = new PlayAudioNow(audioManager);
+            await playAudioNow.executeInChannel(memberVoiceChannel.id);
             return interaction;
         } catch (error) {
             logger.error(

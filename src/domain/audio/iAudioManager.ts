@@ -2,8 +2,8 @@ export interface IAudioManager {
     join(channel: string): Promise<void>;
     leave(): Promise<void>;
 
-    play(): void;
-    playNow(): void;
+    play(isSkip: boolean): void;
+    playNow(): Promise<void>;
     pause(): void;
     resume(): void;
     stop(): void;
@@ -12,7 +12,6 @@ export interface IAudioManager {
     skip(): void;
     clearQueue(): void;
 
-    // getQueue(): AudioTrack[];
-    // getCurrentTrack(): AudioTrack | null;
-    get status(): string;
+    get queueNames(): string[];
+    get currentAudioName(): string | undefined;
 }

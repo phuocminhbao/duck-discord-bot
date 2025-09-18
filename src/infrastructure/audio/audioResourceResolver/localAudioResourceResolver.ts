@@ -9,6 +9,9 @@ export class LocalAudioResourceResolver implements IAudioResourceResolver {
     constructor(query: string) {
         this.query = query;
     }
+    get audioName(): string {
+        return this.query;
+    }
 
     canHandle(): boolean {
         return !isValidUrl(this.query);

@@ -16,11 +16,11 @@ export class AudioManagerRegistry {
         return this._INSTANCE;
     }
 
-    private getAudioManager(guildId: string): AudioManager {
+    public getAudioManager(guildId: string): AudioManager {
         return this.registry[guildId];
     }
 
-    private registerAudioManager(guildId: string, manager: AudioManager) {
+    public registerAudioManager(guildId: string, manager: AudioManager) {
         this.registry[guildId] = manager;
     }
 
