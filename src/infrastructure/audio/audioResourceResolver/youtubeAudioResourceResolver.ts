@@ -6,6 +6,7 @@ export class YoutubeAudioResourceResolver implements IAudioResourceResolver {
     private query: string;
     private preferredAudioItags = [251, 250, 249];
     private resolvedAudioName?: string;
+    private nextSuggestedVideo?: string;
 
     constructor(query: string) {
         this.query = query;
@@ -22,6 +23,7 @@ export class YoutubeAudioResourceResolver implements IAudioResourceResolver {
     async createResource() {
         const info = await ytdl.getInfo(this.query);
         this.resolvedAudioName = info.videoDetails.title;
+        
         const streamUrl = this.selectBestAudioStream(info.formats)?.url;
         const streamResource = await fetch(streamUrl ?? '');
         return createAudioResource(streamResource.body as any);
@@ -39,4 +41,10 @@ export class YoutubeAudioResourceResolver implements IAudioResourceResolver {
 
         return audioFormats.sort((a, b) => (b.audioBitrate ?? 0) - (a.audioBitrate ?? 0))[0];
     }
+
+    private getRelatedVideo = (videoInfo: ytdl.videoInfo): string[] => {
+        return [];
+    };
 }
+
+

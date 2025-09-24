@@ -1,4 +1,7 @@
 export interface IAudioManager {
+    get queueNames(): string[];
+    get currentAudioName(): string | undefined;
+
     join(channel: string): Promise<void>;
     leave(): Promise<void>;
 
@@ -9,8 +12,5 @@ export interface IAudioManager {
     stop(): void;
     clearQueue(): void;
     addToQueue(): Promise<void>;
-    skip(): void;
-
-    get queueNames(): string[];
-    get currentAudioName(): string | undefined;
+    skip(): Promise<void>;
 }

@@ -6,7 +6,7 @@ export class SkipAudio extends AudioUseCase {
         super(audioManager);
     }
 
-    execute() {
-        this.audioManager.skip();
+    async execute() {
+        await this.audioManager.skip();
     }
 }

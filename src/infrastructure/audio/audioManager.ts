@@ -109,10 +109,9 @@ export class AudioManager implements IAudioManager {
         this.resourceResolver = resourceResolver;
     }
 
-    skip(): void {
-        if (this.queue.length === this.EMPTY_QUEUE_LENGTH) {
-            this.stop();
-            return;
+    async skip() {
+        if (this.isQueueEmpty) {
+            
         }
         this.play(true);
     }
@@ -124,8 +123,13 @@ export class AudioManager implements IAudioManager {
     get queueNames(): string[] {
         return this.queue.map((audio) => audio?.name);
     }
+
     get currentAudioName(): string | undefined {
         return this.currentAudio?.name;
+    }
+
+    private get isQueueEmpty(): boolean {
+        return this.queue.length === this.EMPTY_QUEUE_LENGTH;
     }
 
     private get status() {
@@ -137,14 +141,14 @@ export class AudioManager implements IAudioManager {
             logger.info(`▶️ Now playing: ${this.currentAudioName}`);
         });
 
-        this.audioPlayer.on(AudioPlayerStatus.Idle, () => {
+        this.audioPlayer.on(AudioPlayerStatus.Idle, async () => {
             logger.info('⏹️ Playback finished');
-            this.play();
+            await this.skip();
         });
 
-        this.audioPlayer.on('error', (error) => {
+        this.audioPlayer.on('error', async (error) => {
             logger.error(error, 'Audio player error');
-            this.play();
+            await this.skip();
         });
     }
 
